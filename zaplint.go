@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"go/ast"
 	"go/token"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -26,8 +27,9 @@ var errInvalidValue = errors.New("invalid value")
 
 // Options are options for the zaplint analyzer.
 type Options struct {
-	KeyNamingConvention string // Enforce a single key naming convention ("snake", "kebab", "camel", or "pascal").
-	CapitalizedMessage  bool   // Enforce capitalized message.
+	CapitalizedMessage  bool     // Enforce capitalized message.
+	KeyNamingConvention string   // Enforce a single key naming convention ("snake", "kebab", "camel", or "pascal").
+	ExcludeFiles        []string // Exclude files matching the given patterns.
 }
 
 // New creates a new zaplint analyzer.
@@ -48,7 +50,15 @@ func New(opts *Options) *analysis.Analyzer {
 				return nil, fmt.Errorf("zaplint: Options.KeyNamingConvention=%s: %w", opts.KeyNamingConvention, errInvalidValue)
 			}
 
-			run(pass, opts)
+			var regexps []*regexp.Regexp
+			for _, pattern := range opts.ExcludeFiles {
+				re, err := regexp.Compile(pattern)
+				if err != nil {
+					return nil, fmt.Errorf("zaplint: Options.ExcludeFiles=%s: %w", pattern, err)
+				}
+				regexps = append(regexps, re)
+			}
+			run(pass, opts, regexps)
 			return nil, nil
 		},
 	}
@@ -72,18 +82,39 @@ func flags(opts *Options) flag.FlagSet {
 		})
 	}
 
-	strVar(&opts.KeyNamingConvention, "key-naming-convention", "enforce a single key naming convention (snake|kebab|camel|pascal)")
+	strSliceVar := func(value *[]string, name, usage string) {
+		fset.Func(name, usage, func(s string) error {
+			*value = strings.Split(s, ",")
+			return nil
+		})
+	}
+
 	boolVar(&opts.CapitalizedMessage, "capitalized-message", "enforce capitalized message")
+	strVar(&opts.KeyNamingConvention, "key-naming-convention", "enforce a single key naming convention (snake|kebab|camel|pascal)")
+	strSliceVar(&opts.ExcludeFiles, "exclude-files", "exclude files matching the given patterns")
 	return *fset
 }
 
-func run(pass *analysis.Pass, opts *Options) {
+func run(pass *analysis.Pass, opts *Options, regexps []*regexp.Regexp) {
 	visitor := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 	filter := []ast.Node{(*ast.CallExpr)(nil)}
 
 	visitor.Preorder(filter, func(node ast.Node) {
+		if shouldExclude(pass.Fset.Position(node.Pos()).Filename, regexps) {
+			return
+		}
 		visit(pass, opts, node)
 	})
+}
+
+func shouldExclude(filename string, regexps []*regexp.Regexp) bool {
+	for _, re := range regexps {
+		matched := re.MatchString(filename)
+		if matched {
+			return true
+		}
+	}
+	return false
 }
 
 func visit(pass *analysis.Pass, opts *Options, node ast.Node) {

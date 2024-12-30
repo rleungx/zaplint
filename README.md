@@ -1,5 +1,9 @@
 # zaplint
 
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/rleungx/zaplint/go.yml)
+![Codecov](https://img.shields.io/codecov/c/github/rleungx/zaplint)
+![GitHub License](https://img.shields.io/github/license/rleungx/zaplint)
+
 `zaplint` is a Go static analysis tool that ensures consistent code style when using the `zap` logging library.
 
 ## Features
@@ -27,8 +31,9 @@ zaplint -key-naming-convention kebab -capitalized-message true ./...
 
 You can configure `zaplint` using the following flags:
 
-- `-key-naming-convention`: Enforce a single key naming convention (snake|kebab|camel|pascal).
 - `-capitalized-message`: Enforce capitalized log messages.
+- `-key-naming-convention`: Enforce a single key naming convention (`snake`|`kebab`|`camel`|`pascal`).
+- `-exclude-files`: Exclude files matching the given patterns (comma-separated).
 
 ## Contributing
 Contributions are welcome! Please open an issue or submit a pull request.
