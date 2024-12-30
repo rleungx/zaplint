@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"go/ast"
 	"go/token"
+	"strconv"
 	"strings"
 
 	"golang.org/x/tools/go/analysis"
@@ -26,6 +27,7 @@ var errInvalidValue = errors.New("invalid value")
 // Options are options for the zaplint analyzer.
 type Options struct {
 	KeyNamingConvention string // Enforce a single key naming convention ("snake", "kebab", "camel", or "pascal").
+	CapitalizedMessage  bool   // Enforce capitalized message.
 }
 
 // New creates a new zaplint analyzer.
@@ -55,6 +57,14 @@ func New(opts *Options) *analysis.Analyzer {
 func flags(opts *Options) flag.FlagSet {
 	fset := flag.NewFlagSet("zaplint", flag.ContinueOnError)
 
+	boolVar := func(value *bool, name, usage string) {
+		fset.Func(name, usage, func(s string) error {
+			v, err := strconv.ParseBool(s)
+			*value = v
+			return err
+		})
+	}
+
 	strVar := func(value *string, name, usage string) {
 		fset.Func(name, usage, func(s string) error {
 			*value = s
@@ -63,6 +73,7 @@ func flags(opts *Options) flag.FlagSet {
 	}
 
 	strVar(&opts.KeyNamingConvention, "key-naming-convention", "enforce a single key naming convention (snake|kebab|camel|pascal)")
+	boolVar(&opts.CapitalizedMessage, "capitalized-message", "enforce capitalized message")
 	return *fset
 }
 
@@ -81,31 +92,56 @@ func visit(pass *analysis.Pass, opts *Options, node ast.Node) {
 		return
 	}
 
-	// Check if the function being called is a zap logging function
-	fn := typeutil.StaticCallee(pass.TypesInfo, call)
-	if fn == nil {
-		return
+	if opts.CapitalizedMessage {
+		sel, ok := call.Fun.(*ast.SelectorExpr)
+		if ok {
+			if _, ok := level[sel.Sel.Name]; ok {
+				if len(call.Args) == 0 {
+					return
+				}
+
+				msg, ok := call.Args[0].(*ast.BasicLit)
+				if !ok || msg.Kind != token.STRING {
+					return
+				}
+
+				// Trim the quotes from the message value
+				msgValue := strings.Trim(msg.Value, "\"")
+
+				if !isCapitalized(msgValue) {
+					pass.Reportf(msg.Pos(), "message '%s' should be capitalized", msgValue)
+				}
+			}
+		}
 	}
 
-	name := fn.FullName()
-	if _, ok := zapFields[name]; !ok {
-		return
-	}
+	if opts.KeyNamingConvention != "" {
+		// Check if the function being called is a zap logging function
+		fn := typeutil.StaticCallee(pass.TypesInfo, call)
+		if fn == nil {
+			return
+		}
 
-	if len(call.Args) == 0 {
-		return
-	}
+		name := fn.FullName()
+		if _, ok := zapFields[name]; !ok {
+			return
+		}
 
-	key, ok := call.Args[0].(*ast.BasicLit)
-	if !ok || key.Kind != token.STRING {
-		return
-	}
+		if len(call.Args) == 0 {
+			return
+		}
 
-	// Trim the quotes from the key value
-	keyValue := strings.Trim(key.Value, "\"")
+		key, ok := call.Args[0].(*ast.BasicLit)
+		if !ok || key.Kind != token.STRING {
+			return
+		}
 
-	if !isValidKey(keyValue, opts.KeyNamingConvention) {
-		pass.Reportf(key.Pos(), "key '%s' should be in %s", keyValue, caseMap[opts.KeyNamingConvention])
+		// Trim the quotes from the key value
+		keyValue := strings.Trim(key.Value, "\"")
+
+		if !isValidKey(keyValue, opts.KeyNamingConvention) {
+			pass.Reportf(key.Pos(), "key '%s' should be in %s", keyValue, caseMap[opts.KeyNamingConvention])
+		}
 	}
 }
 
@@ -157,6 +193,13 @@ func isValidKey(key, convention string) bool {
 	}
 }
 
+func isCapitalized(s string) bool {
+	if len(s) == 0 {
+		return false
+	}
+	return s[0] >= 'A' && s[0] <= 'Z'
+}
+
 var zapFields = map[string]struct{}{
 	"go.uber.org/zap.Binary":      {},
 	"go.uber.org/zap.Bool":        {},
@@ -200,4 +243,14 @@ var zapFields = map[string]struct{}{
 	"go.uber.org/zap.Durationp":   {},
 	"go.uber.org/zap.NamedError":  {},
 	"go.uber.org/zap.Any":         {},
+}
+
+var level = map[string]struct{}{
+	"Debug":  {},
+	"Info":   {},
+	"Warn":   {},
+	"Error":  {},
+	"DPanic": {},
+	"Panic":  {},
+	"Fatal":  {},
 }

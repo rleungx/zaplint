@@ -24,3 +24,9 @@ func TestKeyNamingConvention(t *testing.T) {
 		})
 	}
 }
+
+func TestCapitalizedMessage(t *testing.T) {
+	opts := &zaplint.Options{CapitalizedMessage: true}
+	analyzer := zaplint.New(opts)
+	analysistest.Run(t, analysistest.TestData(), analyzer, "capitalized_message")
+}
