@@ -1,11 +1,9 @@
 package capitalized
 
-import (
-	"go.uber.org/zap"
-)
+import "go.uber.org/zap"
 
 func tests() {
-	logger := zap.NewProduction()
+	logger, _ := zap.NewProduction()
 	// Positive cases - should pass
 	logger.Info("Message should be capitalized")
 	logger.Error("Error message should be capitalized")

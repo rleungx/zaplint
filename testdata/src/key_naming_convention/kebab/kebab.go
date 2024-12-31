@@ -5,7 +5,7 @@ import (
 )
 
 func tests() {
-	logger := zap.NewProduction()
+	logger, _ := zap.NewProduction()
 	// Positive cases - should pass
 	logger.Info("message", zap.String("user-name", "test"))
 	logger.Info("message", zap.Int("request-id", 123))

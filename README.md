@@ -8,8 +8,10 @@
 
 ## Features
 
-- Enforce a single key naming convention: snake_case, kebab-case, camelCase, or PascalCase.
 - Enforce capitalized log messages.
+- Enforce replacing `zap.Any` with the appropriate type.
+- Enforce a single key naming convention: snake_case, kebab-case, camelCase, or PascalCase.
+- Exclude specified files or patterns from analysis.
 
 ## Installation
 
@@ -24,7 +26,7 @@ go get github.com/rleungx/zaplint
 You can run `zaplint` through the following command: 
 
 ```sh
-zaplint -key-naming-convention kebab -capitalized-message true ./...
+zaplint -key-naming-convention kebab -capitalized-message true -replace-any true ./...
 ```
 
 ## Configuration
@@ -32,6 +34,7 @@ zaplint -key-naming-convention kebab -capitalized-message true ./...
 You can configure `zaplint` using the following flags:
 
 - `-capitalized-message`: Enforce capitalized log messages.
+- `-replace-any`: Enforce replacing `zap.Any` with the appropriate type.
 - `-key-naming-convention`: Enforce a single key naming convention (`snake`|`kebab`|`camel`|`pascal`).
 - `-exclude-files`: Exclude files matching the given patterns (comma-separated).
 

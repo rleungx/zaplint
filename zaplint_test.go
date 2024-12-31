@@ -49,3 +49,10 @@ func TestExcludeFiles(t *testing.T) {
 	analyzer = zaplint.New(opts)
 	analysistest.Run(t, analysistest.TestData(), analyzer, "exclude_files")
 }
+
+func TestReplaceAny(t *testing.T) {
+	t.Parallel()
+	opts := &zaplint.Options{ReplaceAny: true}
+	analyzer := zaplint.New(opts)
+	analysistest.Run(t, analysistest.TestData(), analyzer, "replace_any")
+}
