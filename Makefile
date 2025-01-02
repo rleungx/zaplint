@@ -3,7 +3,7 @@
 all: build
 
 build:
-	go build -o bin/zaplint cmd/main.go
+	go build -o bin/zaplint cmd/zaplint/main.go
 
 test-deps:
 	cd testdata/src && go mod vendor && cd ../..

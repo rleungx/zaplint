@@ -72,8 +72,11 @@ func flags(opts *Options) flag.FlagSet {
 	boolVar := func(value *bool, name, usage string) {
 		fset.Func(name, usage, func(s string) error {
 			v, err := strconv.ParseBool(s)
+			if err != nil {
+				return err
+			}
 			*value = v
-			return err
+			return nil
 		})
 	}
 

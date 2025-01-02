@@ -5,7 +5,7 @@ import (
 	"math/cmplx"
 	"time"
 
-	zap "go.uber.org/zap"
+	"go.uber.org/zap"
 )
 
 func tests() {
@@ -52,27 +52,26 @@ func tests() {
 	logger.Info("message", zap.Any("named_error", fmt.Errorf("error")))            // want "replace zap.Any with zap.NamedError"
 
 	// Array types
-	logger.Info("message", zap.Any("int_array", [3]int{1, 2, 3}))                       // want "replace zap.Any with zap.Ints"
-	logger.Info("message", zap.Any("str_array", [2]string{"a", "b"}))                   // want "replace zap.Any with zap.Strings"
-	logger.Info("message", zap.Any("bool_array", [2]bool{true, false}))                 // want "replace zap.Any with zap.Bools"
-	logger.Info("message", zap.Any("float64_array", [2]float64{1.1, 2.2}))              // want "replace zap.Any with zap.Float64s"
-	logger.Info("message", zap.Any("complex128_array", [2]complex128{1 + 2i, 3 + 4i}))  // want "replace zap.Any with zap.Complex128s"
-	logger.Info("message", zap.Any("uint_array", [2]uint{1, 2}))                        // want "replace zap.Any with zap.Uints"
-	logger.Info("message", zap.Any("uintptr_array", [2]uintptr{1, 2}))                  // want "replace zap.Any with zap.Uintptrs"
-	logger.Info("message", zap.Any("time_array", [2]time.Time{time.Now(), time.Now()})) // want "replace zap.Any with zap.Times"
-	logger.Info("message", zap.Any("duration_array", [2]time.Duration{time.Second, time.Minute})) // want "replace zap.Any with zap.Durations"
+	logger.Info("message", zap.Any("int_array", [3]int{1, 2, 3}))                                        // want "replace zap.Any with zap.Ints"
+	logger.Info("message", zap.Any("str_array", [2]string{"a", "b"}))                                    // want "replace zap.Any with zap.Strings"
+	logger.Info("message", zap.Any("bool_array", [2]bool{true, false}))                                  // want "replace zap.Any with zap.Bools"
+	logger.Info("message", zap.Any("float64_array", [2]float64{1.1, 2.2}))                               // want "replace zap.Any with zap.Float64s"
+	logger.Info("message", zap.Any("complex128_array", [2]complex128{1 + 2i, 3 + 4i}))                   // want "replace zap.Any with zap.Complex128s"
+	logger.Info("message", zap.Any("uint_array", [2]uint{1, 2}))                                         // want "replace zap.Any with zap.Uints"
+	logger.Info("message", zap.Any("uintptr_array", [2]uintptr{1, 2}))                                   // want "replace zap.Any with zap.Uintptrs"
+	logger.Info("message", zap.Any("time_array", [2]time.Time{time.Now(), time.Now()}))                  // want "replace zap.Any with zap.Times"
+	logger.Info("message", zap.Any("duration_array", [2]time.Duration{time.Second, time.Minute}))        // want "replace zap.Any with zap.Durations"
 	logger.Info("message", zap.Any("error_array", [2]error{fmt.Errorf("error1"), fmt.Errorf("error2")})) // want "replace zap.Any with zap.Errors"
 
 	// Slice types
-	logger.Info("message", zap.Any("int_slice", []int{1, 2, 3}))                       // want "replace zap.Any with zap.Ints"
-	logger.Info("message", zap.Any("str_slice", []string{"a", "b"}))                   // want "replace zap.Any with zap.Strings"
-	logger.Info("message", zap.Any("bool_slice", []bool{true, false}))                 // want "replace zap.Any with zap.Bools"
-	logger.Info("message", zap.Any("float64_slice", []float64{1.1, 2.2}))              // want "replace zap.Any with zap.Float64s"
-	logger.Info("message", zap.Any("complex128_slice", []complex128{1 + 2i, 3 + 4i}))  // want "replace zap.Any with zap.Complex128s"
-	logger.Info("message", zap.Any("uint_slice", []uint{1, 2}))                        // want "replace zap.Any with zap.Uints"
-	logger.Info("message", zap.Any("uintptr_slice", []uintptr{1, 2}))                  // want "replace zap.Any with zap.Uintptrs"
-	logger.Info("message", zap.Any("time_slice", []time.Time{time.Now(), time.Now()})) // want "replace zap.Any with zap.Times"
-	logger.Info("message", zap.Any("duration_slice", []time.Duration{time.Second, time.Minute})) // want "replace zap.Any with zap.Durations"
+	logger.Info("message", zap.Any("int_slice", []int{1, 2, 3}))                                        // want "replace zap.Any with zap.Ints"
+	logger.Info("message", zap.Any("str_slice", []string{"a", "b"}))                                    // want "replace zap.Any with zap.Strings"
+	logger.Info("message", zap.Any("bool_slice", []bool{true, false}))                                  // want "replace zap.Any with zap.Bools"
+	logger.Info("message", zap.Any("float64_slice", []float64{1.1, 2.2}))                               // want "replace zap.Any with zap.Float64s"
+	logger.Info("message", zap.Any("complex128_slice", []complex128{1 + 2i, 3 + 4i}))                   // want "replace zap.Any with zap.Complex128s"
+	logger.Info("message", zap.Any("uint_slice", []uint{1, 2}))                                         // want "replace zap.Any with zap.Uints"
+	logger.Info("message", zap.Any("uintptr_slice", []uintptr{1, 2}))                                   // want "replace zap.Any with zap.Uintptrs"
+	logger.Info("message", zap.Any("time_slice", []time.Time{time.Now(), time.Now()}))                  // want "replace zap.Any with zap.Times"
+	logger.Info("message", zap.Any("duration_slice", []time.Duration{time.Second, time.Minute}))        // want "replace zap.Any with zap.Durations"
 	logger.Info("message", zap.Any("error_slice", []error{fmt.Errorf("error1"), fmt.Errorf("error2")})) // want "replace zap.Any with zap.Errors"
-
 }
