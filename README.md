@@ -18,7 +18,7 @@
 To install `zaplint`, use the following command:
 
 ```sh
-go get github.com/rleungx/zaplint
+go install github.com/rleungx/zaplint/cmd/zaplint@latest
 ```
 
 ## Usage
