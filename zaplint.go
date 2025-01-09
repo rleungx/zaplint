@@ -388,9 +388,9 @@ func getType(t types.Type) string {
 		return "Int64"
 	case "*int64":
 		return "Int64p"
-	case "int32":
+	case "int32", "rune":
 		return "Int32"
-	case "*int32":
+	case "*int32", "*rune":
 		return "Int32p"
 	case "int8":
 		return "Int8"
@@ -416,9 +416,9 @@ func getType(t types.Type) string {
 		return "Uint16"
 	case "*uint16":
 		return "Uint16p"
-	case "uint8":
+	case "uint8", "byte":
 		return "Uint8"
-	case "*uint8":
+	case "*uint8", "*byte":
 		return "Uint8p"
 	case "uintptr":
 		return "Uintptr"
@@ -462,7 +462,7 @@ func getType(t types.Type) string {
 				return "Ints"
 			case "int64":
 				return "Int64s"
-			case "int32":
+			case "int32", "rune":
 				return "Int32s"
 			case "int16":
 				return "Int16s"
