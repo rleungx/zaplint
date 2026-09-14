@@ -1,0 +1,10 @@
+package call_aliases
+
+import z "go.uber.org/zap"
+
+func aliases(logger *z.Logger) {
+	logger.Info("lower")             // want "message 'lower' should be capitalized"
+	z.String("BadKey", "v")          // want "key 'BadKey' should be in snake_case"
+	z.Int16("value", int16(1))       // want "replace zap.Any with zap.Int16"
+	(z.Binary)("value", []byte("v")) // want "replace zap.Any with zap.Binary"
+}

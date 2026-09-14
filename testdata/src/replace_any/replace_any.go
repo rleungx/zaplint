@@ -55,24 +55,27 @@ func tests() {
 	logger.Info("message", zap.Any("reflect_data", struct{ Name string }{"test"}))        // want "replace zap.Any with zap.Reflect"
 	logger.Info("message", zap.Any("timestamp_ptr", new(time.Time)))                      // want "replace zap.Any with zap.Timep"
 	logger.Info("message", zap.Any("process_time_ptr", new(time.Duration)))               // want "replace zap.Any with zap.Durationp"
-	logger.Info("message", zap.Any("named_error", fmt.Errorf("error")))                   // want "replace zap.Any with zap.NamedError"
-	logger.Info("message", zap.Any("byte_value", byte(255)))                              // want "replace zap.Any with zap.Uint8"
-	logger.Info("message", zap.Any("byte_value_ptr", new(byte)))                          // want "replace zap.Any with zap.Uint8p"
-	logger.Info("message", zap.Any("rune_value", rune('a')))                              // want "replace zap.Any with zap.Int32"
-	logger.Info("message", zap.Any("rune_value_ptr", new(rune)))                          // want "replace zap.Any with zap.Int32p"
+	logger.Info("message", zap.Any("named_error", fmt.Errorf("error")))
+	logger.Info("message", zap.Any("byte_value", byte(255)))     // want "replace zap.Any with zap.Uint8"
+	logger.Info("message", zap.Any("byte_value_ptr", new(byte))) // want "replace zap.Any with zap.Uint8p"
+	logger.Info("message", zap.Any("rune_value", rune('a')))     // want "replace zap.Any with zap.Int32"
+	logger.Info("message", zap.Any("rune_value_ptr", new(rune))) // want "replace zap.Any with zap.Int32p"
 
-	// Array types
-	logger.Info("message", zap.Any("int_array", [3]int{1, 2, 3}))                                        // want "replace zap.Any with zap.Ints"
-	logger.Info("message", zap.Any("str_array", [2]string{"a", "b"}))                                    // want "replace zap.Any with zap.Strings"
-	logger.Info("message", zap.Any("bool_array", [2]bool{true, false}))                                  // want "replace zap.Any with zap.Bools"
-	logger.Info("message", zap.Any("float64_array", [2]float64{1.1, 2.2}))                               // want "replace zap.Any with zap.Float64s"
-	logger.Info("message", zap.Any("complex128_array", [2]complex128{1 + 2i, 3 + 4i}))                   // want "replace zap.Any with zap.Complex128s"
-	logger.Info("message", zap.Any("uint_array", [2]uint{1, 2}))                                         // want "replace zap.Any with zap.Uints"
-	logger.Info("message", zap.Any("uintptr_array", [2]uintptr{1, 2}))                                   // want "replace zap.Any with zap.Uintptrs"
-	logger.Info("message", zap.Any("time_array", [2]time.Time{time.Now(), time.Now()}))                  // want "replace zap.Any with zap.Times"
-	logger.Info("message", zap.Any("duration_array", [2]time.Duration{time.Second, time.Minute}))        // want "replace zap.Any with zap.Durations"
-	logger.Info("message", zap.Any("rune_array", [2]rune{'a', 'b'}))                                     // want "replace zap.Any with zap.Int32s"
-	logger.Info("message", zap.Any("error_array", [2]error{fmt.Errorf("error1"), fmt.Errorf("error2")})) // want "replace zap.Any with zap.Errors"
+	// Arrays must remain Any: slice constructors cannot accept array values.
+	logger.Info("message", zap.Any("int_array", [3]int{1, 2, 3}))
+	logger.Info("message", zap.Any("str_array", [2]string{"a", "b"}))
+	logger.Info("message", zap.Any("bool_array", [2]bool{true, false}))
+	logger.Info("message", zap.Any("float64_array", [2]float64{1.1, 2.2}))
+	logger.Info("message", zap.Any("complex128_array", [2]complex128{1 + 2i, 3 + 4i}))
+	logger.Info("message", zap.Any("uint_array", [2]uint{1, 2}))
+	logger.Info("message", zap.Any("uintptr_array", [2]uintptr{1, 2}))
+	logger.Info("message", zap.Any("time_array", [2]time.Time{time.Now(), time.Now()}))
+	logger.Info("message", zap.Any("duration_array", [2]time.Duration{time.Second, time.Minute}))
+	logger.Info("message", zap.Any("rune_array", [2]rune{'a', 'b'}))
+	logger.Info("message", zap.Any("error_array", [2]error{fmt.Errorf("error1"), fmt.Errorf("error2")}))
+
+	logger.Info("message", zap.Any("int16", int16(1)))       // want "replace zap.Any with zap.Int16"
+	logger.Info("message", zap.Any("int16_ptr", new(int16))) // want "replace zap.Any with zap.Int16p"
 
 	// Slice types
 	logger.Info("message", zap.Any("int_slice", []int{1, 2, 3}))                                        // want "replace zap.Any with zap.Ints"
